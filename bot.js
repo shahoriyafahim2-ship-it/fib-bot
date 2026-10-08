@@ -1,9 +1,21 @@
-const { Telegraf, Markup } = require('telegraf');
-const BOT_TOKEN = "8885661052:AAF0p3TMJUQBoRRLjulrsh3bYlzOjUyFZbw";
-const WEBAPP_URL = "https://darling-stardust-125e7a.netlify.app";
-const bot = new Telegraf(BOT_TOKEN);
-bot.start(async (ctx) => {
-  await ctx.reply(`🚀 Welcome to FREE INCOME BUX!\n\n✅ Earn by Watching Video`, Markup.inlineKeyboard([[Markup.button.webApp('💰 Open App & Earn', WEBAPP_URL)]]));
+const express = require('express');
+const TelegramBot = require('node-telegram-bot-api');
+
+const app = express();
+app.get('/', (req, res) => res.send('Bot is Running!'));
+app.listen(process.env.PORT || 10000);
+
+const token = process.env.BOT_TOKEN;
+const bot = new TelegramBot(token, { polling: true });
+
+console.log('Bot started...');
+
+bot.onText(/\/start/, (msg) => {
+  bot.sendMessage(msg.chat.id, 'Bot is Online! Ready.');
 });
-bot.launch();
-console.log("Bot Started");
+
+bot.on('message', (msg) => {
+  if (msg.text && !msg.text.startsWith('/start')) {
+    bot.sendMessage(msg.chat.id, `Received: ${msg.text}`);
+  }
+});
